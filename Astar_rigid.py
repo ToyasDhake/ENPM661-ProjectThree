@@ -1,5 +1,3 @@
-from Mechanism import Environment
-from AStar import AStar
 from time import time
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
@@ -122,6 +120,16 @@ def draw():
             coordinates.pop(1)
     pygame.display.flip()
     clock.tick(ticks)
+
+def drawArrow(i, color, list, stroke):
+    pygame.draw.line(display, color, [list[i].parent.env[0]*multiplier, height - list[i].parent.env[1]*multiplier], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
+    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] - 45)))*multiplier
+    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] - 45)))*multiplier
+    pygame.draw.line(display, color, [x, height - y], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
+    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] + 45)))*multiplier
+    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] + 45)))*multiplier
+    pygame.draw.line(display, color,  [x, height - y], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
+
 
 
 draw()
