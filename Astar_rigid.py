@@ -1,7 +1,9 @@
-from Mechanism import Environment
-from AStar import AStar
-from time import time
 import os
+from time import time
+
+from AStar import AStar
+from Mechanism import Environment
+
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from math import sin, cos, radians
@@ -10,6 +12,7 @@ multiplier = 5
 height, width = 200 * multiplier, 300 * multiplier
 count = 0
 
+# Get input from user
 radius = int(input("Enter radius: "))
 clearance = int(input("Enter Clearance: "))
 clearance += radius
@@ -17,18 +20,13 @@ coordinates = []
 env = Environment([0, 0], clearance)
 startBool = True
 goalBool = True
-
-# Manual Mode
+# Get start position
+startPos = [0, 0, 0]
 while startBool:
-    # Get start node from user
-    startPos = input("Enter start position: ")
-
-    # Format input to use in code
-    if "," in startPos:
-        startPos = startPos.replace(" ", "")
-        startPos = startPos.split(",")
-    else:
-        startPos = startPos.split(" ")
+    print("Enter start position: ")
+    startPos[0] = input("x: ")
+    startPos[1] = input("y: ")
+    startPos[2] = input("theta: ")
 
     # Check to see if input is valid
     if env.possiblePostion([int(startPos[0]), int(startPos[1])]):
@@ -37,46 +35,34 @@ while startBool:
         startBool = False
     else:
         print("Invalid position.")
-
+# Get goal position
+goalPos = [0, 0]
 while goalBool:
-    # Get goal node from user
-    goalPos = input("Enter goal position: ")
-
-    # Format input to use in code
-    if "," in goalPos:
-        goalPos = goalPos.replace(" ", "")
-        goalPos = goalPos.split(",")
-    else:
-        goalPos = goalPos.split(" ")
+    print("Enter goal position: ")
+    goalPos[0] = input("x: ")
+    goalPos[1] = input("y: ")
 
     # Check to see if input is valid
     if env.possiblePostion([int(goalPos[0]), int(goalPos[1])]):
-        coordinates.append([int(goalPos[0]) * multiplier, (200 - int(goalPos[1])) * multiplier, int(goalPos[2])])
+        coordinates.append([int(goalPos[0]) * multiplier, (200 - int(goalPos[1])) * multiplier])
         count += 1
         goalBool = False
     else:
         print("Invalid position.")
-
+# Get step size
 stepSize = int(input("Enter step size: "))
 
-# radius = 0
-# clearance = 0
-# coordinates = [[100,900, 180], [1450, 50, 0]]
-# stepSize = 10
-
+# Initialize AStar object
 aStar = AStar([int(coordinates[0][0] / multiplier), int(200 - coordinates[0][1] / multiplier), coordinates[0][2]],
-              [int(coordinates[1][0] / multiplier), int(200 - coordinates[1][1] / multiplier), coordinates[1][2]], clearance, stepSize)
+              [int(coordinates[1][0] / multiplier), int(200 - coordinates[1][1] / multiplier)], clearance, stepSize)
 start = time()
+# Compute solution
+print("Computing...")
 solution = aStar.solve()
 end = time()
-print(end-start)
-if len(solution) == 3:
-    print("Unreachable goal.")
-else:
-    path, search = solution[0], solution[1]
+print(end - start)
 
-
-
+# Initialize pygame
 pygame.init()
 display = pygame.display.set_mode((width, height))
 pygame.font.init()
@@ -93,6 +79,8 @@ diamond = [((225 * multiplier), height - (10 * multiplier)), ((200 * multiplier)
            ((225 * multiplier), height - (40 * multiplier)), ((250 * multiplier), height - (25 * multiplier))]
 ellipse = [(110 * multiplier), (height - (120 * multiplier)), (80 * multiplier), (40 * multiplier)]
 
+
+# Draw environment
 def draw():
     global count
     pygame.draw.polygon(display, (138, 132, 226), hexagon)
@@ -138,28 +126,34 @@ def draw():
             coordinates.pop(1)
     pygame.display.flip()
     clock.tick(ticks)
-    
 
-def drawLine(i, color, list, stroke):
-    pygame.draw.line(display, color, [list[i].parent.env[0]*multiplier, height - list[i].parent.env[1]*multiplier], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
-    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] - 45)))*multiplier
-    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] - 45)))*multiplier
-    pygame.draw.line(display, color, [x, height - y], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
-    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] + 45)))*multiplier
-    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] + 45)))*multiplier
-    pygame.draw.line(display, color,  [x, height - y], [list[i].env[0]*multiplier, height - list[i].env[1]*multiplier], stroke)
 
-if len(solution) != 3:
+# Draw arrow
+def drawArrow(i, color, list, stroke):
+    pygame.draw.line(display, color, [list[i].parent.env[0] * multiplier, height - list[i].parent.env[1] * multiplier],
+                     [list[i].env[0] * multiplier, height - list[i].env[1] * multiplier], stroke)
+    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] - 45))) * multiplier
+    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] - 45))) * multiplier
+    pygame.draw.line(display, color, [x, height - y],
+                     [list[i].env[0] * multiplier, height - list[i].env[1] * multiplier], stroke)
+    x = (list[i].env[0] - 2 * cos(radians(list[i].env[2] + 45))) * multiplier
+    y = (list[i].env[1] - 2 * sin(radians(list[i].env[2] + 45))) * multiplier
+    pygame.draw.line(display, color, [x, height - y],
+                     [list[i].env[0] * multiplier, height - list[i].env[1] * multiplier], stroke)
+
+
+if len(solution) == 3:
+    print("Unreachable goal.")
+else:
+    path, search = solution[0], solution[1]
     for i in range(1, len(search)):
-        drawLine(i, (255, 255, 255), search, 1)
+        drawArrow(i, (255, 255, 255), search, 1)
 
-    for i in range(1,len(path)):
-        drawLine(i, (0, 255, 0), path, 5)
-    # pygame.draw.line(display, (0, 255, 0), [path[i].parent.env[0]*multiplier, height - path[i].parent.env[1]*multiplier], [path[i].env[0]*multiplier, height - path[i].env[1]*multiplier], 5)
-# pygame.draw.aaline(display, (0, 255, 0), [10, height-10], [450, height-50])
-    draw()
-    temp = input()
-    
-    pygame.time.wait(3000)
-    pygame.quit()
+    for i in range(1, len(path)):
+        drawArrow(i, (0, 255, 0), path, 5)
+
+draw()
+
+temp = input("Enter something to exit.")
+pygame.quit()
 exit()

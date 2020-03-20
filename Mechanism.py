@@ -3,7 +3,7 @@ from math import sqrt, cos, sin, radians, atan2, floor
 
 class Node:
     # Initialize
-    def __init__(self, start, env, goal, stepSize,  parent=None):
+    def __init__(self, start, env, goal, stepSize, parent=None):
         self.env = env
         self.parent = parent
         self.goal = goal
@@ -12,7 +12,8 @@ class Node:
         else:
             self.g = 0
         # Heuristic function
-        self.weight = self.g + sqrt((env[0] - goal[0]) ** 2 + (env[1] - goal[1]) ** 2 ) + ((env[2]-floor(atan2(( goal[1] - start[1]), ( goal[0] - start[0]))))/30)*(stepSize/5)
+        self.weight = self.g + sqrt((env[0] - goal[0]) ** 2 + (env[1] - goal[1]) ** 2) + (
+                    (env[2] - floor(atan2((goal[1] - start[1]), (goal[0] - start[0])))) / 30) * (stepSize / 5)
 
     # Solve for path from goal to start node
     def path(self):
@@ -181,7 +182,7 @@ class Environment:
     def move(self, start, val, stepSize, node):
         temp = None
         if val == '1':
-            angle = self.currentPosition[2]+60
+            angle = self.currentPosition[2] + 60
             angle = self.angleCheck(angle)
             tempBoolean = True
             for i in range(stepSize):
@@ -190,8 +191,8 @@ class Environment:
                 if not self.possiblePostion([x, y]):
                     tempBoolean = False
             if tempBoolean:
-                x = self.currentPosition[0]+stepSize*cos(radians(angle))
-                y = self.currentPosition[1]+stepSize*sin(radians(angle))
+                x = self.currentPosition[0] + stepSize * cos(radians(angle))
+                y = self.currentPosition[1] + stepSize * sin(radians(angle))
                 temp = Node(start, [x, y, angle], node.goal, stepSize, node)
         if val == '2':
             angle = self.currentPosition[2] + 30
@@ -247,9 +248,10 @@ class Environment:
                 temp = Node(start, [x, y, angle], node.goal, stepSize, node)
         return temp
 
+    # Keep angle value from 0 to 360
     def angleCheck(self, angle):
         if angle >= 360:
             angle -= 360
         if angle < 0:
-            angle = 360+ angle
+            angle = 360 + angle
         return angle
