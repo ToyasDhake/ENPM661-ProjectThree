@@ -20,13 +20,17 @@ class AStar:
         NodeDict = {tuple(CurrentNode.env)}
         search.append(CurrentNode)
         # Check if the current node is the goal node
-        while sqrt((CurrentNode.env[0] - self.goal[0]) ** 2 + (CurrentNode.env[1] - self.goal[1]) ** 2 ) > 5 or abs(CurrentNode.env[2]-self.goal[2]) != 0:
+        while 1==1:
+            if sqrt((CurrentNode.env[0] - self.goal[0]) ** 2 + (CurrentNode.env[1] - self.goal[1]) ** 2 ) < 5 and abs(CurrentNode.env[2] - self.goal[2]) <= 30:
+                break
+            # or abs(CurrentNode.env[2]-self.goal[2]) != 0
             # print(sqrt((CurrentNode.env[0] - self.goal[0]) ** 2 + (CurrentNode.env[1] - self.goal[1]) ** 2 ))
             # Keep checking if there are nodes in list
             if len(NodeList) > 0:
                 # Set current node to the first node in the list and then delete from list
                 CurrentNode = NodeList.pop()
-                print(CurrentNode.env)
+                if CurrentNode.env[2] >150:
+                    print(CurrentNode.env)
                 Course = Environment(CurrentNode.env, self.clearance)
                 # Check all of the possible actions
                 for action in Course.possibleMoves(self.start, CurrentNode, self.stepSize):
