@@ -142,15 +142,28 @@ def drawArrow(i, color, list, stroke):
                      [list[i].env[0] * multiplier, height - list[i].env[1] * multiplier], stroke)
 
 
+
+
 if len(solution) == 3:
     print("Unreachable goal.")
+    for i in range(1, len(solution[2])):
+        drawArrow(i, (255, 255, 255), solution[2], 1)
+    draw()
+    pygame.display.flip()
 else:
     path, search = solution[0], solution[1]
     for i in range(1, len(search)):
         drawArrow(i, (255, 255, 255), search, 1)
-
+    draw()
+    pygame.display.flip()
+    pygame.time.wait(1500)
+    display.fill((0, 0, 0))
     for i in range(1, len(path)):
+        pygame.event.get()
         drawArrow(i, (0, 255, 0), path, 5)
+        draw()
+        pygame.display.flip()
+        clock.tick(ticks)
 
 draw()
 
