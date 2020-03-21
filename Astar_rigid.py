@@ -67,7 +67,7 @@ pygame.init()
 display = pygame.display.set_mode((width, height))
 pygame.font.init()
 myfont = pygame.font.SysFont('Comic Sans MS', 10 * multiplier)
-ticks = 400
+ticks = 100
 clock = pygame.time.Clock()
 
 hexagon = [((25 * multiplier), height - (185 * multiplier)), ((75 * multiplier), height - (185 * multiplier)),
@@ -156,11 +156,9 @@ else:
         drawArrow(i, (255, 255, 255), search, 1)
     draw()
     pygame.display.flip()
-    pygame.time.wait(1500)
-    display.fill((0, 0, 0))
     for i in range(1, len(path)):
         pygame.event.get()
-        drawArrow(i, (0, 255, 0), path, 5)
+        drawArrow(i, (255, 0, 255), path, 5)
         draw()
         pygame.display.flip()
         clock.tick(ticks)
